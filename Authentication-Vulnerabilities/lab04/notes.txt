@@ -1,0 +1,32 @@
+Username enumeration via subtly different responses
+
+Goals
+- Enumerate a valid username and then brute-force the user's password.
+
+Analysis:
+---------
+
+1. Send a login request with invalid username and password
+
+2. Send this request to burp Intruder
+
+3. Mark the username field, on the payloads select the username list and then press
+   Start attack
+
+4. First check if there is a different Status code
+
+5. Then compare some requests that have a different Length
+
+6. If there is nothing different, then Filter with "Invalid username or password."
+   and make a negative search to see if a response is different. Be creative!
+
+7. A request is slightly different. It preserves the message "Invalid username or
+   password". This means that the username akamai is correct.
+
+8. Try to bruteforce using hydra by running this command:
+   sudo hydra -l akamai -P /home/kali/Identification-and-Authentication-Failures/lab04/passwords.txt -u -f -I "0ad000a104e6bfe486303c7800f60081.web-security-academy.net" https-post-form "/login:username=^USER^&password=^PASS^&Login=Login:Log In" -V -o results.txt
+
+9. Log in with the user's credentials
+
+username -> akamai
+password -> zxcvbnm

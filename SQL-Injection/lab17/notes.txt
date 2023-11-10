@@ -1,0 +1,29 @@
+SQL injection with filter bypass via XML encoding
+
+Goal:
+- Exploit SQL injection to retrieve the admin user's credentials from the users table and log into their account.
+
+/* Different formats may provide different ways for you to obfuscate attacks that are otherwise blocked due to WAFs and other defense mechanisms.
+Weak implementations often look for common SQL injection keywords within the request, so you may be able to bypass these filters by encoding or
+escaping characters in the prohibited keywords. */
+
+Analysis:
+---------
+/* A web application firewall (WAF) will block requests that contain obvious signs of
+a SQL injection attack. You'll need to find a way to obfuscate your malicious query
+to bypass this filter. We recommend using the Hackvertor extension to do this. */
+
+1. We try to send a request from the Repeater by altering the storeId
+   by adding UNION SELECT NULL. This will give a 403 Forbidden response with a text
+   saying "Attack detected". So we will try to obfuscate the payload. Select the payload
+   and then RightClick->Extentions->Hackvector->Encode->hex_entities. If we send again
+   the request we will get a 200 OK response. So the injection was successful.
+
+2. If we try INION SELECT NULL, NULL we will get as a result 0 units which means that
+   there is one column on the query. So we are not able to output the result in one
+   column. We will use concatenation.
+
+3. 1 UNION SELECT username || '~' || password  FROM users
+
+administrator
+u4fpvn556reuqazorq53

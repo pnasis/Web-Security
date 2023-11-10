@@ -1,0 +1,27 @@
+Password reset broken logic
+
+Goal:
+- Exploit password reset functionality to reset Carlos's password and access his account.
+
+Your credentials: wiener:peter
+Victim's username: carlos
+
+Analysis:
+---------
+
+1. First go to 'My account'
+
+2. Press the 'Forgot password?'
+
+3. On the GET 'forgot-password' page, enter your username
+
+4. Go to the Email client and press the link
+
+5. On the GET /forgot-password?temp-forgot-password-token=55n4qprwbjb1m0s17j7p5g6grqz8p99o page, enter as the password  'password' on both fields
+
+6. Inspect the POST /forgot-password?temp-forgot-password-token=55n4qprwbjb1m0s17j7p5g6grqz8p99o request. Then send it to repeater.
+
+7. Try to alter the temp-forgot-password-token on both places and username to carlos. Then send the request. If you get a 302 response code, then
+   the password resetwas  successful.
+
+8. If you now try to log in with username 'carlos' and password 'password', you will log in successfully.

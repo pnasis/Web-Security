@@ -1,0 +1,28 @@
+2FA simple bypass
+
+Goals:
+- Bypass THE 2FA verification and access Carlos's account.
+
+Your credentials: wiener:peter
+Victim's credentials carlos:montoya
+
+Analysis:
+---------
+
+1. First login with your credentials (POST /login)
+
+2. You will be prompted on a (GET /login2) that's asking for a 4-digit security code 
+
+3. Click on the Eail client to get the code
+
+4. Enter the code. A POST request to the /login2 page will be made. Then you will be
+   redirected to a /my-account page
+
+5. Log out
+
+6. We will now check if the app enforces the 2FA endpoint
+
+7. Login with victim's credentials
+
+8. You will be moved to the (GET /login2) page. Alter the url by removing the /login2
+   with /my-account

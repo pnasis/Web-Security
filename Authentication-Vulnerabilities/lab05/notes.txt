@@ -1,0 +1,41 @@
+Username enumeration via response timing
+
+Goals
+- Enumerate a valid username and then brute-force the user's password.
+
+Your credentials: wiener:peter
+
+Analysis:
+---------
+
+1. Make a request with dummy credentials to the website and send it to Repeater. After a few tries you will get an IP ban
+
+2. X-Forwarded-For: 1  header is supported, which allows you to spoof your IP address and bypass the IP-based brute-force protection. If you add it
+   then you can send again requests
+
+3. Continue experimenting with usernames and passwords. Pay particular attention to the response times. Notice that when the username is invalid,
+   the response time is roughly the same. However, when you enter a valid username (your own), the response time is increased depending on the length
+   of the password you entered
+
+4. Send this request to Intruder and select Pitchfork as the attack type. Add as payloads the values of X-Forwarded-For and username.  Then set the
+   password to a very long value (around 100 lettters)
+
+5. On the payload 1, select the Numbers payload type. Enter the range 3 - 103 and set the step to 1
+
+6. On the payload 2, select the Simple list and load the list of usernames. Then start the attack
+
+7. When the attack finishes, at the top of the dialog, click Columns and select the Response received and Response completed options. Notice that
+   one of the response times was significantly longer than the others. Repeat this request a few times to make sure it consistently takes longer, then
+   make a note of this username
+
+8. Create a new Burp Intruder attack for the same request. Add the X-Forwarded-For header again and add a payload position to it. Insert the username
+   that you just identified and add a payload position to the password
+
+9. On the Payloads tab, add the list of numbers in payload set 1 and add the list of passwords to payload set 2. Start the attack
+
+10. When the attack is finished, find the response with a 302 status by sorting by Status code
+
+11. Then login with the identified username and password
+
+username -> agent
+password -> 121212

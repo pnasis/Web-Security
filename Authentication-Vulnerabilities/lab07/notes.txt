@@ -1,0 +1,29 @@
+Username enumeration via account lock
+
+Goals
+- Exploit logic flaw to enumerate valid username and then brute-force user's password.
+
+Analysis:
+---------
+
+1. Send a request with random credentials. Then send it to Repeater.
+
+2. Try sending multiple requests in order to identify if a lockout mechanism exists.
+   Send the request to Intruder.
+
+3. Mark as payload the username and the password field values (password should be
+   marked as test$$). Then select the Attack type to be Cluster bomb. For the first
+   payload select the usernames.txt list and for the second Null payloads. On the
+   payload settings, select 5 payloads to be generated. Then press Start Attack.
+
+4. We can see that if we try many times to login with an invalid username, we will
+   not trigger a lockout mechanism, but if we try with a valid one, we will get
+   banned. So we can enumerate a valid username.
+
+5. Then we can try to brute force the password for the valid username.
+
+6. In the results, look at the grep extract column. Notice that there are a couple
+   of different error messages, but one of the responses did not contain any error
+   message. Make a note of this password.
+
+7. Try to log in using the identified username and password.
