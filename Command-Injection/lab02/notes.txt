@@ -1,0 +1,8 @@
+Blind OS command injection with time delays
+
+Goal:
+- Exploit blind command injection in the feedback function.
+
+
+Analysis:
+---------

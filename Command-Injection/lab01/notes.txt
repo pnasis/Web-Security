@@ -1,0 +1,7 @@
+OS command injection, simple case
+
+Goal:
+- Exploit command injection to execute whoami command.
+
+Analysis:
+---------
